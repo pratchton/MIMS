@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavigation();
     renderMotorTable(motors.slice(0, 50)); // Show first 50 motors
     updateMotorCount(motors.length);
+    buildMotorDatabase(); // Build database specifications
 });
 
 // Navigation
@@ -561,10 +562,262 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
+// Motor Database Functions
+let motorDatabase = [];
+let filteredDatabase = [];
+let currentSpecification = null;
+
+function buildMotorDatabase() {
+    // Group motors by specification
+    const specMap = new Map();
+    
+    motors.forEach(motor => {
+        const key = `${motor.power}|${motor.voltage}|${motor.speed}|${motor.frameSize}|${motor.zone}`;
+        
+        if (!specMap.has(key)) {
+            specMap.set(key, {
+                power: motor.power,
+                voltage: motor.voltage,
+                speed: motor.speed,
+                frameSize: motor.frameSize,
+                zone: motor.zone,
+                current: motor.current,
+                atexRating: motor.atexRating,
+                motors: []
+            });
+        }
+        
+        specMap.get(key).motors.push(motor);
+    });
+    
+    // Convert to array and sort by count
+    motorDatabase = Array.from(specMap.values()).sort((a, b) => b.motors.length - a.motors.length);
+    filteredDatabase = [...motorDatabase];
+    
+    renderMotorDatabase(filteredDatabase);
+    updateDatabaseStats();
+}
+
+function renderMotorDatabase(database) {
+    const tbody = document.getElementById('databaseTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    if (database.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                    No specifications found matching the selected criteria
+                </td>
+            </tr>
+        `;
+        document.getElementById('dbResultCount').textContent = '0';
+        return;
+    }
+    
+    database.forEach((spec, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><span class="badge badge-info">${spec.frameSize}</span></td>
+            <td><strong>${spec.power}</strong></td>
+            <td>${spec.voltage}</td>
+            <td>${spec.speed}</td>
+            <td>${spec.current}</td>
+            <td>
+                <span class="tier-badge ${spec.zone === 'Zone 1' ? 'tier-critical' : spec.zone === 'Zone 2' ? 'tier-high' : 'tier-medium'}">
+                    ${spec.zone}
+                </span>
+            </td>
+            <td>${spec.atexRating || 'N/A'}</td>
+            <td><span class="count-badge">${spec.motors.length}</span></td>
+            <td>
+                <button class="btn btn-sm btn-primary" onclick="viewMotorsInSpec(${index})">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                    View Motors
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    document.getElementById('dbResultCount').textContent = database.length;
+}
+
+function applyDatabaseFilters() {
+    const powerFilter = document.getElementById('dbFilterPower').value;
+    const voltageFilter = document.getElementById('dbFilterVoltage').value;
+    const speedFilter = document.getElementById('dbFilterSpeed').value;
+    const frameFilter = document.getElementById('dbFilterFrame').value;
+    const zoneFilter = document.getElementById('dbFilterZone').value;
+    
+    filteredDatabase = motorDatabase.filter(spec => {
+        if (powerFilter && spec.power.toString() !== powerFilter) return false;
+        if (voltageFilter && spec.voltage !== voltageFilter) return false;
+        if (speedFilter && spec.speed.toString() !== speedFilter) return false;
+        if (frameFilter && spec.frameSize !== frameFilter) return false;
+        if (zoneFilter && spec.zone !== zoneFilter) return false;
+        return true;
+    });
+    
+    renderMotorDatabase(filteredDatabase);
+    updateDatabaseStats();
+}
+
+function clearDatabaseFilters() {
+    document.getElementById('dbFilterPower').value = '';
+    document.getElementById('dbFilterVoltage').value = '';
+    document.getElementById('dbFilterSpeed').value = '';
+    document.getElementById('dbFilterFrame').value = '';
+    document.getElementById('dbFilterZone').value = '';
+    
+    filteredDatabase = [...motorDatabase];
+    renderMotorDatabase(filteredDatabase);
+    updateDatabaseStats();
+}
+
+function updateDatabaseStats() {
+    document.getElementById('uniqueSpecsCount').textContent = filteredDatabase.length;
+    
+    const totalMotors = filteredDatabase.reduce((sum, spec) => sum + spec.motors.length, 0);
+    document.getElementById('totalMotorsInDb').textContent = totalMotors;
+}
+
+function viewMotorsInSpec(index) {
+    const spec = filteredDatabase[index];
+    currentSpecification = spec;
+    
+    // Update modal title
+    document.getElementById('motorsListTitle').textContent = 'Motors with Matching Specification';
+    document.getElementById('motorsListSubtitle').textContent = `${spec.motors.length} motor(s) found`;
+    
+    // Build specification summary
+    const specSummary = document.getElementById('specSummary');
+    specSummary.innerHTML = `
+        <div class="spec-summary-title">Specification Details</div>
+        <div class="spec-summary-grid">
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Type & Frame</div>
+                <div class="spec-summary-value">${spec.frameSize}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Power</div>
+                <div class="spec-summary-value">${spec.power} kW</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Voltage</div>
+                <div class="spec-summary-value">${spec.voltage}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Speed</div>
+                <div class="spec-summary-value">${spec.speed} rpm</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Current</div>
+                <div class="spec-summary-value">${spec.current} A</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Zone/Category</div>
+                <div class="spec-summary-value">${spec.zone}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">ATEX Rating</div>
+                <div class="spec-summary-value">${spec.atexRating || 'N/A'}</div>
+            </div>
+        </div>
+    `;
+    
+    // Render motors table
+    renderMotorsList(spec.motors);
+    
+    // Show modal
+    document.getElementById('motorsListModal').classList.add('active');
+}
+
+function renderMotorsList(motorsList) {
+    const tbody = document.getElementById('motorsListTableBody');
+    tbody.innerHTML = '';
+    
+    document.getElementById('motorsListCount').textContent = motorsList.length;
+    
+    motorsList.forEach(motor => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>${motor.equipmentNo}</strong></td>
+            <td>${motor.tagNumber}</td>
+            <td>${motor.department}</td>
+            <td>${motor.plant}</td>
+            <td>${motor.manufacturer}</td>
+            <td>${motor.serialNumber || 'N/A'}</td>
+            <td>
+                <span class="status-badge ${getStatusClass(motor.status)}">
+                    ${motor.status}
+                </span>
+            </td>
+            <td>
+                <button class="btn btn-ghost btn-sm" onclick="viewMotorFromList(${motor.id})" title="View Details">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="editMotorFromList(${motor.id})" title="Edit">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function viewMotorFromList(motorId) {
+    closeMotorsListModal();
+    setTimeout(() => {
+        viewMotor(motorId);
+    }, 300);
+}
+
+function editMotorFromList(motorId) {
+    closeMotorsListModal();
+    setTimeout(() => {
+        openMotorModal('edit', motorId);
+    }, 300);
+}
+
+function closeMotorsListModal() {
+    document.getElementById('motorsListModal').classList.remove('active');
+}
+
+function exportMotorsList() {
+    if (!currentSpecification) return;
+    
+    const headers = ['Equipment No', 'Tag Number', 'Department', 'Plant', 'Manufacturer', 'Serial Number', 'Status'];
+    const csvContent = [
+        headers.join(','),
+        ...currentSpecification.motors.map(motor => [
+            motor.equipmentNo,
+            motor.tagNumber,
+            motor.department,
+            motor.plant,
+            motor.manufacturer,
+            motor.serialNumber || 'N/A',
+            motor.status
+        ].join(','))
+    ].join('\n');
+    
+    const filename = `motors_${currentSpecification.frameSize}_${currentSpecification.power}kW.csv`;
+    downloadCSV(csvContent, filename);
+    showNotification('Exporting motors list...', 'success');
+}
+
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
     const motorModal = document.getElementById('motorModal');
     const viewMotorModal = document.getElementById('viewMotorModal');
+    const motorsListModal = document.getElementById('motorsListModal');
     
     if (event.target === motorModal) {
         closeMotorModal();
@@ -572,6 +825,10 @@ window.addEventListener('click', function(event) {
     
     if (event.target === viewMotorModal) {
         closeViewMotorModal();
+    }
+    
+    if (event.target === motorsListModal) {
+        closeMotorsListModal();
     }
 });
 

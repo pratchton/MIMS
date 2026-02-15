@@ -719,6 +719,10 @@ body {
     max-width: 1000px;
 }
 
+.modal-xlarge {
+    max-width: 1400px;
+}
+
 @keyframes slideUp {
     from {
         opacity: 0;
@@ -1068,4 +1072,47 @@ body {
 .info-row-value {
     color: var(--gray-900);
     flex: 1;
+}
+
+/* Specification Summary */
+.spec-summary {
+    background: linear-gradient(135deg, var(--sap-blue-light) 0%, white 100%);
+    border: 2px solid var(--sap-blue);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+}
+
+.spec-summary-title {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--sap-blue-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-md);
+}
+
+.spec-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.spec-summary-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.spec-summary-label {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.spec-summary-value {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--sap-blue-dark);
 }

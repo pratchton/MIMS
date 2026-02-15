@@ -252,7 +252,7 @@
             <div class="page-header">
                 <div class="page-title-section">
                     <h2 class="page-title">Motor Database / Interchangeable</h2>
-                    <p class="page-description">View all motors and find interchangeable specifications</p>
+                    <p class="page-description">View all motors grouped by specifications and find interchangeable motors</p>
                 </div>
                 <div class="page-actions">
                     <button class="btn btn-primary" onclick="exportDatabaseToExcel()">
@@ -267,119 +267,113 @@
             <!-- Advanced Filters -->
             <div class="filters-section">
                 <div class="filter-group">
-                    <label class="filter-label">Department</label>
-                    <select class="filter-select" id="dbFilterDepartment">
-                        <option value="">All Departments</option>
-                        <option value="Production">Production</option>
-                        <option value="Utilities">Utilities</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Warehouse">Warehouse</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Plant</label>
-                    <select class="filter-select" id="dbFilterPlant">
-                        <option value="">All Plants</option>
-                        <option value="Plant A">Plant A</option>
-                        <option value="Plant B">Plant B</option>
-                        <option value="Plant C">Plant C</option>
-                        <option value="Plant D">Plant D</option>
-                    </select>
-                </div>
-                <div class="filter-group">
                     <label class="filter-label">Power (kW)</label>
-                    <select class="filter-select" id="dbFilterPower">
+                    <select class="filter-select" id="dbFilterPower" onchange="applyDatabaseFilters()">
                         <option value="">All Power Ratings</option>
-                        <option value="0-10">0-10 kW</option>
-                        <option value="10-50">10-50 kW</option>
-                        <option value="50-100">50-100 kW</option>
-                        <option value="100+">100+ kW</option>
+                        <option value="3.7">3.7 kW</option>
+                        <option value="5.5">5.5 kW</option>
+                        <option value="7.5">7.5 kW</option>
+                        <option value="11">11 kW</option>
+                        <option value="15">15 kW</option>
+                        <option value="18.5">18.5 kW</option>
+                        <option value="22">22 kW</option>
+                        <option value="30">30 kW</option>
+                        <option value="37">37 kW</option>
+                        <option value="45">45 kW</option>
+                        <option value="55">55 kW</option>
+                        <option value="75">75 kW</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Voltage (V)</label>
+                    <select class="filter-select" id="dbFilterVoltage" onchange="applyDatabaseFilters()">
+                        <option value="">All Voltages</option>
+                        <option value="380-415V">380-415V</option>
+                        <option value="220V">220V</option>
+                        <option value="440V">440V</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Speed (rpm)</label>
-                    <select class="filter-select" id="dbFilterSpeed">
+                    <select class="filter-select" id="dbFilterSpeed" onchange="applyDatabaseFilters()">
                         <option value="">All Speeds</option>
                         <option value="1500">1500 rpm</option>
                         <option value="3000">3000 rpm</option>
-                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Type & Frame</label>
+                    <select class="filter-select" id="dbFilterFrame" onchange="applyDatabaseFilters()">
+                        <option value="">All Frame Sizes</option>
+                        <option value="IEC 100L">IEC 100L</option>
+                        <option value="IEC 112M">IEC 112M</option>
+                        <option value="IEC 132M">IEC 132M</option>
+                        <option value="IEC 160M">IEC 160M</option>
+                        <option value="IEC 180M">IEC 180M</option>
+                        <option value="IEC 200L">IEC 200L</option>
+                        <option value="IEC 225M">IEC 225M</option>
+                        <option value="IEC 250M">IEC 250M</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Zone/Cat</label>
-                    <select class="filter-select" id="dbFilterZone">
+                    <select class="filter-select" id="dbFilterZone" onchange="applyDatabaseFilters()">
                         <option value="">All Zones</option>
                         <option value="Zone 1">Zone 1</option>
                         <option value="Zone 2">Zone 2</option>
                         <option value="Safe Area">Safe Area</option>
                     </select>
                 </div>
+                <button class="btn btn-ghost" onclick="clearDatabaseFilters()">Clear Filters</button>
+            </div>
+
+            <!-- Statistics Summary -->
+            <div class="stats-grid" style="margin-bottom: 1.5rem;">
+                <div class="stat-card" style="grid-column: span 1;">
+                    <div class="stat-icon stat-icon-blue">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="uniqueSpecsCount">0</div>
+                        <div class="stat-label">Unique Specifications</div>
+                    </div>
+                </div>
+                <div class="stat-card" style="grid-column: span 1;">
+                    <div class="stat-icon stat-icon-green">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalMotorsInDb">5000</div>
+                        <div class="stat-label">Total Motors in Database</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Database Table -->
             <div class="table-container">
                 <div class="table-header">
-                    <h3 class="table-title">Interchangeable Motor Database</h3>
+                    <h3 class="table-title">Interchangeable Motor Specifications (<span id="dbResultCount">0</span> groups)</h3>
                 </div>
-                <table class="data-table">
+                <table class="data-table" id="databaseTable">
                     <thead>
                         <tr>
                             <th>Type & Frame</th>
                             <th>Power (kW)</th>
+                            <th>Voltage (V)</th>
                             <th>Speed (rpm)</th>
-                            <th>Voltage</th>
                             <th>Current (A)</th>
                             <th>Zone/Cat</th>
                             <th>ATEX Rating</th>
-                            <th>Count</th>
-                            <th>Locations</th>
+                            <th>Motor Count</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="badge badge-info">IEC 132M</span></td>
-                            <td>7.5</td>
-                            <td>1500</td>
-                            <td>380-415V</td>
-                            <td>15.2</td>
-                            <td>Zone 2</td>
-                            <td>Ex d IIB T4</td>
-                            <td><span class="count-badge">24</span></td>
-                            <td><button class="btn-link">View Motors</button></td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-info">IEC 160M</span></td>
-                            <td>11</td>
-                            <td>1500</td>
-                            <td>380-415V</td>
-                            <td>22.1</td>
-                            <td>Zone 2</td>
-                            <td>Ex d IIB T4</td>
-                            <td><span class="count-badge">18</span></td>
-                            <td><button class="btn-link">View Motors</button></td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-info">IEC 180M</span></td>
-                            <td>18.5</td>
-                            <td>1500</td>
-                            <td>380-415V</td>
-                            <td>35.8</td>
-                            <td>Zone 1</td>
-                            <td>Ex d IIB T4</td>
-                            <td><span class="count-badge">32</span></td>
-                            <td><button class="btn-link">View Motors</button></td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-info">IEC 200L</span></td>
-                            <td>30</td>
-                            <td>1500</td>
-                            <td>380-415V</td>
-                            <td>57.5</td>
-                            <td>Zone 1</td>
-                            <td>Ex d IIB T4</td>
-                            <td><span class="count-badge">15</span></td>
-                            <td><button class="btn-link">View Motors</button></td>
-                        </tr>
+                    <tbody id="databaseTableBody">
+                        <!-- Data will be populated by JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -515,6 +509,60 @@
                     </svg>
                     Edit Motor
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Motors List Modal (From Database) -->
+    <div id="motorsListModal" class="modal">
+        <div class="modal-content modal-xlarge">
+            <div class="modal-header">
+                <div>
+                    <h2 id="motorsListTitle">Motors with Matching Specification</h2>
+                    <p class="modal-subtitle" id="motorsListSubtitle"></p>
+                </div>
+                <button class="modal-close" onclick="closeMotorsListModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Specification Summary -->
+                <div class="spec-summary" id="specSummary">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+                
+                <!-- Motors Table -->
+                <div class="table-container" style="margin-top: 1.5rem;">
+                    <div class="table-header">
+                        <h3 class="table-title">Motor List (<span id="motorsListCount">0</span> motors)</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-ghost btn-sm" onclick="exportMotorsList()">
+                                <svg class="btn-icon" viewBox="0 0 24 24">
+                                    <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+                                </svg>
+                                Export List
+                            </button>
+                        </div>
+                    </div>
+                    <table class="data-table" id="motorsListTable">
+                        <thead>
+                            <tr>
+                                <th>Equipment No.</th>
+                                <th>Tag Number</th>
+                                <th>Department</th>
+                                <th>Plant</th>
+                                <th>Manufacturer</th>
+                                <th>Serial Number</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="motorsListTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeMotorsListModal()">Close</button>
             </div>
         </div>
     </div>
