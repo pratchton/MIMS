@@ -273,9 +273,205 @@ function saveMotor() {
 
 function viewMotor(motorId) {
     const motor = motors.find(m => m.id === motorId);
-    if (motor) {
-        alert(`Motor Details:\n\nEquipment No: ${motor.equipmentNo}\nTag: ${motor.tagNumber}\nDepartment: ${motor.department}\nPlant: ${motor.plant}\nPower: ${motor.power} kW\nManufacturer: ${motor.manufacturer}\nStatus: ${motor.status}`);
+    if (!motor) {
+        showNotification('Motor not found', 'error');
+        return;
     }
+    
+    // Update modal title
+    document.getElementById('viewModalTitle').textContent = `Motor: ${motor.tagNumber}`;
+    document.getElementById('viewModalSubtitle').textContent = `Equipment No: ${motor.equipmentNo}`;
+    
+    // Store current motor ID for edit function
+    window.currentViewMotorId = motorId;
+    
+    // Build the view content
+    const content = `
+        <div class="view-section">
+            <h3 class="view-section-title">
+                <svg class="view-section-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                Basic Information
+            </h3>
+            <div class="view-grid">
+                <div class="view-field">
+                    <label class="view-label">SAP Equipment Number</label>
+                    <div class="view-value">${motor.equipmentNo}</div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Tag Number</label>
+                    <div class="view-value">${motor.tagNumber}</div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Department</label>
+                    <div class="view-value">
+                        <span class="view-badge view-badge-blue">${motor.department}</span>
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Plant</label>
+                    <div class="view-value">
+                        <span class="view-badge view-badge-blue">${motor.plant}</span>
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Status</label>
+                    <div class="view-value">
+                        <span class="view-badge ${motor.status === 'Active' ? 'view-badge-green' : motor.status === 'Maintenance' ? 'view-badge-orange' : 'view-badge-red'}">
+                            ${motor.status}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="view-section">
+            <h3 class="view-section-title">
+                <svg class="view-section-icon" viewBox="0 0 24 24">
+                    <path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-2.6-1.53C16.17 17.98 14.21 19 12 19z"/>
+                </svg>
+                Electrical Specifications
+            </h3>
+            <div class="view-grid">
+                <div class="view-field">
+                    <label class="view-label">Power (kW)</label>
+                    <div class="view-value"><strong>${motor.power} kW</strong></div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Voltage</label>
+                    <div class="view-value">${motor.voltage}</div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Speed (rpm)</label>
+                    <div class="view-value">${motor.speed} rpm</div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Current</label>
+                    <div class="view-value">${motor.current} A</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="view-section">
+            <h3 class="view-section-title">
+                <svg class="view-section-icon" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                Motor Details
+            </h3>
+            <div class="view-grid">
+                <div class="view-field">
+                    <label class="view-label">Type & Frame Size</label>
+                    <div class="view-value">
+                        <span class="view-badge view-badge-blue">${motor.frameSize}</span>
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Serial Number</label>
+                    <div class="view-value ${motor.serialNumber ? '' : 'empty'}">
+                        ${motor.serialNumber || 'Not specified'}
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Manufacturer</label>
+                    <div class="view-value">${motor.manufacturer}</div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Zone/Category</label>
+                    <div class="view-value">
+                        <span class="view-badge ${motor.zone === 'Zone 1' ? 'view-badge-red' : motor.zone === 'Zone 2' ? 'view-badge-orange' : 'view-badge-green'}">
+                            ${motor.zone}
+                        </span>
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">ATEX Rating</label>
+                    <div class="view-value ${motor.atexRating ? '' : 'empty'}">
+                        ${motor.atexRating || 'N/A'}
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">VSD/DOL</label>
+                    <div class="view-value">
+                        <span class="view-badge view-badge-blue">${motor.vsdDol}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="view-section">
+            <h3 class="view-section-title">
+                <svg class="view-section-icon" viewBox="0 0 24 24">
+                    <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+                </svg>
+                Bearing & Lubrication
+            </h3>
+            <div class="view-grid">
+                <div class="view-field">
+                    <label class="view-label">Bearing DE (Drive End)</label>
+                    <div class="view-value ${motor.bearingDE ? '' : 'empty'}">
+                        ${motor.bearingDE || 'Not specified'}
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Bearing NDE (Non-Drive End)</label>
+                    <div class="view-value ${motor.bearingNDE ? '' : 'empty'}">
+                        ${motor.bearingNDE || 'Not specified'}
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Lubrication Type</label>
+                    <div class="view-value">
+                        <span class="view-badge view-badge-blue">${motor.greaseOil}</span>
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Type of ${motor.greaseOil}</label>
+                    <div class="view-value ${motor.lubricationType ? '' : 'empty'}">
+                        ${motor.lubricationType || 'Not specified'}
+                    </div>
+                </div>
+                <div class="view-field">
+                    <label class="view-label">Greasing Duration</label>
+                    <div class="view-value ${motor.greasingDuration ? '' : 'empty'}">
+                        ${motor.greasingDuration ? motor.greasingDuration + ' hours' : 'Not specified'}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="view-section">
+            <h3 class="view-section-title">
+                <svg class="view-section-icon" viewBox="0 0 24 24">
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+                Motor Photo
+            </h3>
+            <div class="view-photo-placeholder">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+                <span>No photo uploaded</span>
+                <small style="color: var(--gray-500); font-size: var(--font-size-xs);">Motor nameplate or installation photo</small>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('viewMotorContent').innerHTML = content;
+    document.getElementById('viewMotorModal').classList.add('active');
+}
+
+function closeViewMotorModal() {
+    document.getElementById('viewMotorModal').classList.remove('active');
+}
+
+function editFromView() {
+    const motorId = window.currentViewMotorId;
+    closeViewMotorModal();
+    setTimeout(() => {
+        openMotorModal('edit', motorId);
+    }, 300);
 }
 
 function deleteMotor(motorId) {
@@ -367,9 +563,15 @@ function showNotification(message, type = 'info') {
 
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
-    const modal = document.getElementById('motorModal');
-    if (event.target === modal) {
+    const motorModal = document.getElementById('motorModal');
+    const viewMotorModal = document.getElementById('viewMotorModal');
+    
+    if (event.target === motorModal) {
         closeMotorModal();
+    }
+    
+    if (event.target === viewMotorModal) {
+        closeViewMotorModal();
     }
 });
 
