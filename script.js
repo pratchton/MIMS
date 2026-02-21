@@ -1,48 +1,89 @@
-// Sample Motor Data Generator
-const departments = ['Production', 'Utilities', 'Maintenance', 'Warehouse'];
-const plants = ['Plant A', 'Plant B', 'Plant C', 'Plant D'];
-const manufacturers = ['ABB', 'Siemens', 'WEG', 'Toshiba', 'Crompton Greaves', 'BHEL'];
-const frameSizes = ['IEC 100L', 'IEC 112M', 'IEC 132M', 'IEC 160M', 'IEC 180M', 'IEC 200L', 'IEC 225M', 'IEC 250M'];
-const zones = ['Zone 1', 'Zone 2', 'Safe Area'];
-const atexRatings = ['Ex d IIB T4', 'Ex d IIC T5', 'Ex e IIB T4', 'N/A'];
-const bearingTypes = ['6309-2Z', '6308-2RS', '6310-2Z', '6311-2Z', '6312-2RS', '6313-2Z'];
-const greaseTypes = ['Shell Gadus S2 V220', 'Mobil Polyrex EM', 'SKF LGEP 2', 'Castrol LMX'];
+// Real Motor Database from CSV
+const realMotorData = [
+    {"equipmentNo":"11010097000","tagNumber":"76PM001A","description":"ACCIDENTALLY OILY WASTE PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":22,"voltage":"415V","speed":2959,"current":36.7,"frequency":50,"frameSize":"180MLA","serialNumber":"3G1F1931609134","manufacturer":"ABB","zone":"Zone 1","atexRating":"Ex-de IIB, T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"63102ZC3","bearingNDE":"63102ZC3","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097001","tagNumber":"76PM001B","description":"ACCIDENTALLY OILY WASTE PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":22,"voltage":"415V","speed":2959,"current":36.7,"frequency":50,"frameSize":"180MLA","serialNumber":"3G1F1931609135","manufacturer":"ABB","zone":"Zone 1","atexRating":"Ex-de IIB, T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"63102ZC3","bearingNDE":"63102ZC3","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097002","tagNumber":"76PM002A","description":"FLARE DRAIN PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":15,"voltage":"415V","speed":2960,"current":26.2,"frequency":50,"frameSize":"160","serialNumber":"3GZF500730-47","manufacturer":"ABB","zone":"Zone 1","atexRating":"Ex-de IIB, T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"63092ZC3","bearingNDE":"63092ZC3","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097003","tagNumber":"76PM002B","description":"FLARE DRAIN PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":15,"voltage":"415V","speed":2960,"current":26.2,"frequency":50,"frameSize":"160","serialNumber":"3G1F1931609338","manufacturer":"ABB","zone":"Zone 1","atexRating":"Ex-de IIB, T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"63092ZC3","bearingNDE":"63092ZC3","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097004","tagNumber":"76PM008A","description":"CONDENSATE PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":30,"voltage":"415V","speed":2940,"current":50,"frequency":50,"frameSize":"WUDF225MN","serialNumber":"RI 711818","manufacturer":"BROOK CROMPTON","zone":"Zone 2","atexRating":"Ex-nA II, T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"6314C3","bearingNDE":"6314C3","greaseOil":"Grease","lubricationType":"SHELL GADUS S2V","greasingDuration":"2600"},
+    {"equipmentNo":"11010097005","tagNumber":"76PM008B","description":"CONDENSATE PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":30,"voltage":"415V","speed":2940,"current":50,"frequency":50,"frameSize":"WUDF225MN","serialNumber":"RI 711819","manufacturer":"BROOK CROMPTON","zone":"Zone 2","atexRating":"Ex-nA II, T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"6314C3","bearingNDE":"6314C3","greaseOil":"Grease","lubricationType":"SHELL GADUS S2V","greasingDuration":"2600"},
+    {"equipmentNo":"11010097006","tagNumber":"76XK001KM001","description":"PURGE GAS BLOWER DRIVER","department":"PolyOlefin-3","plant":"PP5","power":180,"voltage":"3300V","speed":1482,"current":38.7,"frequency":50,"frameSize":"400","serialNumber":"10411217","manufacturer":"NIDEC ASI S.P.A","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"NU221MC3+6221MC3","bearingNDE":"NU221MC3","greaseOil":"Grease","lubricationType":"Kluber Asonic","greasingDuration":"400"},
+    {"equipmentNo":"11010097007","tagNumber":"76XK001KM002A","description":"NOISE HOOD FAN DRIVER","department":"PolyOlefin-3","plant":"PP5","power":3,"voltage":"415V","speed":1455,"current":6,"frequency":50,"frameSize":"112MU","serialNumber":"20191083","manufacturer":"NIDEC ASI S.P.A","zone":"Zone 2","atexRating":"Ex-tD A22 IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6206ZZC3","bearingNDE":"6206ZZC3","greaseOil":"Grease","lubricationType":"Shell Alvania RL3","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097008","tagNumber":"76XK001KM002B","description":"NOISE HOOD FAN DRIVER","department":"PolyOlefin-3","plant":"PP5","power":3,"voltage":"415V","speed":1455,"current":6,"frequency":50,"frameSize":"112MU","serialNumber":"20191084","manufacturer":"NIDEC ASI S.P.A","zone":"Zone 2","atexRating":"Ex-tD A22 IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6206ZZC3","bearingNDE":"6206ZZC3","greaseOil":"Grease","lubricationType":"Shell Alvania RL3","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097009","tagNumber":"76PM010A","description":"PP-5 OPERATOR SHELTER SANITARY WASTE WATER LIFTING PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":11,"voltage":"415V","speed":2925,"current":19.8,"frequency":50,"frameSize":"160","serialNumber":"N/A","manufacturer":"EMOD","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"","bearingNDE":"","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097010","tagNumber":"76PM010B","description":"PP-5 OPERATOR SHELTER SANITARY WASTE WATER LIFTING PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":11,"voltage":"415V","speed":2925,"current":19.8,"frequency":50,"frameSize":"160","serialNumber":"N/A","manufacturer":"EMOD","zone":"Zone 2","atexRating":"Ex db eb IIB T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"","bearingNDE":"","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097011","tagNumber":"76XP101APM101A","description":"LOOP REACTOR FEED PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":560,"voltage":"3300V","speed":2983,"current":111.9,"frequency":50,"frameSize":"450","serialNumber":"20183761RMHC39001","manufacturer":"HYUNDAI","zone":"Zone 2","atexRating":"Ex-nA IIC, T3, Gc, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"HF980","bearingNDE":"HF980","greaseOil":"Oil","lubricationType":"VISCOSITY ISO VG 32","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097012","tagNumber":"76XP101BPM101B","description":"LOOP REACTOR FEED PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":560,"voltage":"3300V","speed":2983,"current":111.9,"frequency":50,"frameSize":"450","serialNumber":"20183761RMHC39002","manufacturer":"HYUNDAI","zone":"Zone 2","atexRating":"Ex-nA IIC, T3, Gc, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"HF980","bearingNDE":"HF980","greaseOil":"Oil","lubricationType":"VISCOSITY ISO VG 32","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097013","tagNumber":"76XK202KM202A","description":"PROPYLENE REFRIGERATION COMPRESSOR DRIVER","department":"PolyOlefin-3","plant":"PP5","power":1428,"voltage":"11000V","speed":2987,"current":85,"frequency":50,"frameSize":"500L2A","serialNumber":"4670010","manufacturer":"ABB","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"EFNL31190FBM","bearingNDE":"EFNL31190EBM","greaseOil":"Oil","lubricationType":"ISO VG 32","greasingDuration":"4000"},
+    {"equipmentNo":"11010097014","tagNumber":"76XK202KM202B","description":"PROPYLENE REFRIGERATION COMPRESSOR DRIVER","department":"PolyOlefin-3","plant":"PP5","power":1428,"voltage":"11000V","speed":2987,"current":85,"frequency":50,"frameSize":"500L2A","serialNumber":"4670046","manufacturer":"ABB","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"EFNL31190FBM","bearingNDE":"EFNL31190EBM","greaseOil":"Oil","lubricationType":"ISO VG 32","greasingDuration":"4000"},
+    {"equipmentNo":"11010097015","tagNumber":"76XK202KM203A","description":"ACOUSTIC HOOD FAN FOR PROPYLENE COMPRESSOR","department":"PolyOlefin-3","plant":"PP5","power":0.18,"voltage":"415V","speed":2895,"current":0.75,"frequency":50,"frameSize":"63A2","serialNumber":"1917357347","manufacturer":"CEMP","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6202ZZ","bearingNDE":"6202ZZ","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097016","tagNumber":"76XK202KM203B","description":"ACOUSTIC HOOD FAN FOR PROPYLENE COMPRESSOR","department":"PolyOlefin-3","plant":"PP5","power":0.18,"voltage":"415V","speed":2895,"current":0.75,"frequency":50,"frameSize":"63A2","serialNumber":"1917357348","manufacturer":"CEMP","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6202ZZ","bearingNDE":"6202ZZ","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097017","tagNumber":"76XK202KM204A","description":"ACOUSTIC HOOD FAN FOR PROPYLENE COMPRESSOR","department":"PolyOlefin-3","plant":"PP5","power":0.18,"voltage":"415V","speed":2895,"current":0.75,"frequency":50,"frameSize":"63A2","serialNumber":"1917359754","manufacturer":"CEMP","zone":"Zone 2","atexRating":"Ex-tD A22 IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6202ZZ","bearingNDE":"6202ZZ","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097018","tagNumber":"76XK202KM204B","description":"ACOUSTIC HOOD FAN FOR PROPYLENE COMPRESSOR","department":"PolyOlefin-3","plant":"PP5","power":0.18,"voltage":"415V","speed":2895,"current":0.75,"frequency":50,"frameSize":"63A2","serialNumber":"1917359753","manufacturer":"CEMP","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6202ZZ","bearingNDE":"6202ZZ","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097019","tagNumber":"76PM206","description":"GLYCOL LOADING PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":1.1,"voltage":"415V","speed":1437,"current":2.87,"frequency":50,"frameSize":"90SLA","serialNumber":"3G1F1940620467","manufacturer":"ABB","zone":"Zone 2","atexRating":"Ex-nA II, T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"62052ZC3","bearingNDE":"62052ZC3","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097020","tagNumber":"76PM205A","description":"GLYCOL WATER PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":55,"voltage":"415V","speed":1480,"current":93,"frequency":50,"frameSize":"WU-DF280MNE","serialNumber":"RI 711794","manufacturer":"BROOK CROMPTON","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6318C3","bearingNDE":"6318C3","greaseOil":"Grease","lubricationType":"Shellgadus s2v 100.3","greasingDuration":"5900"},
+    {"equipmentNo":"11010097021","tagNumber":"76PM205B","description":"GLYCOL WATER PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":55,"voltage":"415V","speed":1480,"current":93,"frequency":50,"frameSize":"WU-DF280MNE","serialNumber":"RI 711795","manufacturer":"BROOK CROMPTON","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6318C3","bearingNDE":"6318C3","greaseOil":"Grease","lubricationType":"Shellgadus s2v 100.3","greasingDuration":"5900"},
+    {"equipmentNo":"11010097022","tagNumber":"76XK202PM215A","description":"PRC PROCESS OIL CIRCULATION PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":11,"voltage":"415V","speed":1470,"current":20.4,"frequency":50,"frameSize":"160M/L","serialNumber":"1047379458","manufacturer":"WEG","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6309C3","bearingNDE":"6308C3","greaseOil":"Grease","lubricationType":"MOBIL POLYREX EM","greasingDuration":"13000"},
+    {"equipmentNo":"11010097023","tagNumber":"76XK202PM215B","description":"PRC PROCESS OIL CIRCULATION PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":11,"voltage":"415V","speed":1470,"current":20.4,"frequency":50,"frameSize":"160M/L","serialNumber":"1047379459","manufacturer":"WEG","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6309C3","bearingNDE":"6308C3","greaseOil":"Grease","lubricationType":"MOBIL POLYREX EM","greasingDuration":"13000"},
+    {"equipmentNo":"11010097024","tagNumber":"76XK202PM216A","description":"COMPRESSOR OIL CHARGE PUMP MOTOR","department":"PolyOlefin-3","plant":"PP5","power":4,"voltage":"415V","speed":1475,"current":7.98,"frequency":50,"frameSize":"132","serialNumber":"1047619766","manufacturer":"WEG","zone":"Safe Area","atexRating":"IP55","tempClass":"","vsdDol":"DOL","bearingDE":"6308ZZ","bearingNDE":"6207ZZ","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097025","tagNumber":"76XK202PM216B","description":"COMPRESSOR OIL CHARGE PUMP MOTOR","department":"PolyOlefin-3","plant":"PP5","power":4,"voltage":"415V","speed":1475,"current":7.98,"frequency":50,"frameSize":"132","serialNumber":"1047619765","manufacturer":"WEG","zone":"Zone 2","atexRating":"Ex-de IIB, T3, IP55","tempClass":"T3","vsdDol":"DOL","bearingDE":"6308ZZ","bearingNDE":"6207ZZ","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097026","tagNumber":"76XK202PM217A","description":"PRC PROCESS OIL CIRCULATION PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":11,"voltage":"415V","speed":1470,"current":20.4,"frequency":50,"frameSize":"160M/L","serialNumber":"1047329460","manufacturer":"WEG","zone":"Zone 2","atexRating":"Ex II3GD Ex nA IIC T3 Gc Ex tc IIIC T125°C Dc","tempClass":"T3","vsdDol":"DOL","bearingDE":"6309C3","bearingNDE":"6308C3","greaseOil":"Grease","lubricationType":"MOBIL POLYREX EM","greasingDuration":"13000"},
+    {"equipmentNo":"11010097027","tagNumber":"76XK202PM217B","description":"PRC PROCESS OIL CIRCULATION PUMP DRIVER","department":"PolyOlefin-3","plant":"PP5","power":11,"voltage":"415V","speed":1470,"current":20.4,"frequency":50,"frameSize":"160M/L","serialNumber":"1047379461","manufacturer":"WEG","zone":"Zone 2","atexRating":"Ex II3GD Ex nA IIC T3 Gc Ex tc IIIC T125°C Dc","tempClass":"T3","vsdDol":"DOL","bearingDE":"6309C3","bearingNDE":"6308C3","greaseOil":"Grease","lubricationType":"MOBIL POLYREX EM","greasingDuration":"13000"},
+    {"equipmentNo":"11010097028","tagNumber":"76XK272KM202A","description":"NOISE HOOD FAN DRIVER","department":"PolyOlefin-3","plant":"PP5","power":2.2,"voltage":"415V","speed":1435,"current":4.5,"frequency":50,"frameSize":"100L","serialNumber":"317370H11003","manufacturer":"RELOY SOMER","zone":"Zone 2","atexRating":"Ex pxb IIC T3 Gb, IP 55","tempClass":"T3","vsdDol":"DOL","bearingDE":"6206ZZC3","bearingNDE":"6205ZZC3","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"},
+    {"equipmentNo":"11010097029","tagNumber":"76XK202KM202B","description":"NOISE HOOD FAN DRIVER","department":"PolyOlefin-3","plant":"PP5","power":2.2,"voltage":"415V","speed":1435,"current":4.5,"frequency":50,"frameSize":"100L","serialNumber":"317370H11004","manufacturer":"RELOY SOMER","zone":"Zone 2","atexRating":"Ex pxb IIC T3 Gb, IP 55","tempClass":"T3","vsdDol":"DOL","bearingDE":"6206ZZC3","bearingNDE":"6205ZZC3","greaseOil":"Grease","lubricationType":"Non greasable","greasingDuration":"N/A"}
+];
 
-// Generate sample motors
-let motors = [];
-for (let i = 1; i <= 5000; i++) {
-    const dept = departments[Math.floor(Math.random() * departments.length)];
-    const plant = plants[Math.floor(Math.random() * plants.length)];
-    const power = [3.7, 5.5, 7.5, 11, 15, 18.5, 22, 30, 37, 45, 55, 75][Math.floor(Math.random() * 12)];
-    const speed = [1500, 3000][Math.floor(Math.random() * 2)];
-    const voltage = '380-415V';
-    const current = (power * 1.8).toFixed(1);
-    const status = Math.random() > 0.85 ? (Math.random() > 0.5 ? 'Maintenance' : 'Critical') : 'Active';
+// Status options: Running, Stand by, Under Maintenance, Isolate
+const statusOptions = ['Running', 'Stand by', 'Under Maintenance', 'Isolate'];
+
+// Departments and Plants (from previous update)
+const departments = ['Olefin-1/2', 'Olefin-3/4', 'PolyOlefin-1/2', 'PolyOlefin-3', 'PolyOlefin-4', 'Utility&Offsite'];
+const plantsByDepartment = {
+    'Olefin-1/2': ['EU1', 'EU2', 'OCU', 'BT'],
+    'Olefin-3/4': ['EU3', 'EU4', 'BT3'],
+    'PolyOlefin-1/2': ['PE1', 'PE2', 'PE3', 'PP1', 'PP2'],
+    'PolyOlefin-3': ['PE4', 'PE5', 'PP3', 'PP4', 'PP5', 'PPC', 'PEC'],
+    'PolyOlefin-4': ['PE6', 'PE7', 'LDPE', 'XL1', 'XL2'],
+    'Utility&Offsite': ['UO1', 'UO2', 'UO3', 'UO4', 'MH1', 'MH2', 'MH3']
+};
+const allPlants = ['EU1', 'EU2', 'OCU', 'BT', 'EU3', 'EU4', 'BT3', 'PE1', 'PE2', 'PE3', 'PP1', 'PP2', 'PE4', 'PE5', 'PP3', 'PP4', 'PP5', 'PPC', 'PEC', 'PE6', 'PE7', 'LDPE', 'XL1', 'XL2', 'UO1', 'UO2', 'UO3', 'UO4', 'MH1', 'MH2', 'MH3'];
+
+// Build motors array from real data
+let motors = realMotorData.map((motor, index) => {
+    // Assign random status with more running motors
+    const rand = Math.random();
+    let status;
+    if (rand < 0.70) status = 'Running';  // 70% running
+    else if (rand < 0.85) status = 'Stand by';  // 15% standby
+    else if (rand < 0.95) status = 'Under Maintenance';  // 10% maintenance
+    else status = 'Isolate';  // 5% isolated
     
-    motors.push({
-        id: i,
-        equipmentNo: `EQ-${String(i).padStart(6, '0')}`,
-        tagNumber: `${dept.substring(0, 3).toUpperCase()}-M-${String(i).padStart(4, '0')}`,
-        department: dept,
-        plant: plant,
-        power: power,
-        voltage: voltage,
-        speed: speed,
-        current: current,
-        frameSize: frameSizes[Math.floor(Math.random() * frameSizes.length)],
-        serialNumber: `SN${Math.floor(Math.random() * 1000000)}`,
-        manufacturer: manufacturers[Math.floor(Math.random() * manufacturers.length)],
-        zone: zones[Math.floor(Math.random() * zones.length)],
-        atexRating: atexRatings[Math.floor(Math.random() * atexRatings.length)],
-        vsdDol: Math.random() > 0.7 ? 'VSD' : 'DOL',
-        bearingDE: bearingTypes[Math.floor(Math.random() * bearingTypes.length)],
-        bearingNDE: bearingTypes[Math.floor(Math.random() * bearingTypes.length)],
-        greaseOil: 'Grease',
-        lubricationType: greaseTypes[Math.floor(Math.random() * greaseTypes.length)],
-        greasingDuration: [2000, 3000, 4000, 5000][Math.floor(Math.random() * 4)],
+    return {
+        id: index + 1,
+        equipmentNo: motor.equipmentNo,
+        tagNumber: motor.tagNumber,
+        description: motor.description,
+        department: motor.department,
+        plant: motor.plant,
+        power: parseFloat(motor.power),
+        voltage: motor.voltage,
+        speed: parseInt(motor.speed),
+        current: parseFloat(motor.current),
+        frequency: motor.frequency,
+        frameSize: motor.frameSize,
+        serialNumber: motor.serialNumber,
+        manufacturer: motor.manufacturer,
+        zone: motor.zone,
+        atexRating: motor.atexRating,
+        tempClass: motor.tempClass,
+        vsdDol: motor.vsdDol,
+        bearingDE: motor.bearingDE,
+        bearingNDE: motor.bearingNDE,
+        greaseOil: motor.greaseOil,
+        lubricationType: motor.lubricationType,
+        greasingDuration: motor.greasingDuration,
         status: status
-    });
-}
+    };
+});
 
 // Current filters
 let currentFilters = {
@@ -54,10 +95,25 @@ let currentFilters = {
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     initNavigation();
+    updateStatistics();
     renderMotorTable(motors.slice(0, 50)); // Show first 50 motors
     updateMotorCount(motors.length);
     buildMotorDatabase(); // Build database specifications
 });
+
+// Update statistics based on motor status
+function updateStatistics() {
+    const total = motors.length;
+    const running = motors.filter(m => m.status === 'Running').length;
+    const standby = motors.filter(m => m.status === 'Stand by').length;
+    const maintenance = motors.filter(m => m.status === 'Under Maintenance').length;
+    const isolate = motors.filter(m => m.status === 'Isolate').length;
+    
+    document.getElementById('totalMotors').textContent = total;
+    document.getElementById('runningMotors').textContent = running;
+    document.getElementById('standbyMotors').textContent = standby;
+    document.getElementById('maintenanceMotors').textContent = maintenance;
+}
 
 // Navigation
 function initNavigation() {
@@ -131,9 +187,10 @@ function renderMotorTable(motorsToRender) {
 
 function getStatusClass(status) {
     switch(status) {
-        case 'Active': return 'status-active';
-        case 'Maintenance': return 'status-maintenance';
-        case 'Critical': return 'status-critical';
+        case 'Running': return 'status-active';
+        case 'Stand by': return 'status-standby';
+        case 'Under Maintenance': return 'status-maintenance';
+        case 'Isolate': return 'status-critical';
         default: return 'status-active';
     }
 }

@@ -139,20 +139,49 @@
                     <label class="filter-label">Department</label>
                     <select class="filter-select" id="filterDepartment" onchange="applyFilters()">
                         <option value="">All Departments</option>
-                        <option value="Production">Production</option>
-                        <option value="Utilities">Utilities</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Warehouse">Warehouse</option>
+                        <option value="Olefin-1/2">Olefin-1/2</option>
+                        <option value="Olefin-3/4">Olefin-3/4</option>
+                        <option value="PolyOlefin-1/2">PolyOlefin-1/2</option>
+                        <option value="PolyOlefin-3">PolyOlefin-3</option>
+                        <option value="PolyOlefin-4">PolyOlefin-4</option>
+                        <option value="Utility&Offsite">Utility&Offsite</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Plant</label>
                     <select class="filter-select" id="filterPlant" onchange="applyFilters()">
                         <option value="">All Plants</option>
-                        <option value="Plant A">Plant A</option>
-                        <option value="Plant B">Plant B</option>
-                        <option value="Plant C">Plant C</option>
-                        <option value="Plant D">Plant D</option>
+                        <option value="EU1">EU1</option>
+                        <option value="EU2">EU2</option>
+                        <option value="OCU">OCU</option>
+                        <option value="BT">BT</option>
+                        <option value="EU3">EU3</option>
+                        <option value="EU4">EU4</option>
+                        <option value="BT3">BT3</option>
+                        <option value="PE1">PE1</option>
+                        <option value="PE2">PE2</option>
+                        <option value="PE3">PE3</option>
+                        <option value="PP1">PP1</option>
+                        <option value="PP2">PP2</option>
+                        <option value="PE4">PE4</option>
+                        <option value="PE5">PE5</option>
+                        <option value="PP3">PP3</option>
+                        <option value="PP4">PP4</option>
+                        <option value="PP5">PP5</option>
+                        <option value="PPC">PPC</option>
+                        <option value="PEC">PEC</option>
+                        <option value="PE6">PE6</option>
+                        <option value="PE7">PE7</option>
+                        <option value="LDPE">LDPE</option>
+                        <option value="XL1">XL1</option>
+                        <option value="XL2">XL2</option>
+                        <option value="UO1">UO1</option>
+                        <option value="UO2">UO2</option>
+                        <option value="UO3">UO3</option>
+                        <option value="UO4">UO4</option>
+                        <option value="MH1">MH1</option>
+                        <option value="MH2">MH2</option>
+                        <option value="MH3">MH3</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -171,7 +200,7 @@
                         </svg>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-value">5,000</div>
+                        <div class="stat-value" id="totalMotors">30</div>
                         <div class="stat-label">Total Motors</div>
                     </div>
                 </div>
@@ -182,8 +211,8 @@
                         </svg>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-value">4,750</div>
-                        <div class="stat-label">Active Motors</div>
+                        <div class="stat-value" id="runningMotors">21</div>
+                        <div class="stat-label">Running</div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -193,8 +222,8 @@
                         </svg>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-value">150</div>
-                        <div class="stat-label">Under Maintenance</div>
+                        <div class="stat-value" id="standbyMotors">4</div>
+                        <div class="stat-label">Stand by</div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -204,8 +233,8 @@
                         </svg>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-value">100</div>
-                        <div class="stat-label">Critical Attention</div>
+                        <div class="stat-value" id="maintenanceMotors">3</div>
+                        <div class="stat-label">Under Maintenance</div>
                     </div>
                 </div>
             </div>
@@ -213,7 +242,7 @@
             <!-- Motors Table -->
             <div class="table-container">
                 <div class="table-header">
-                    <h3 class="table-title">Motor Registry (<span id="motorCount">50</span> motors)</h3>
+                    <h3 class="table-title">Motor Registry (<span id="motorCount">30</span> motors)</h3>
                     <div class="table-actions">
                         <button class="btn btn-ghost btn-sm" onclick="exportToExcel()">
                             <svg class="btn-icon" viewBox="0 0 24 24">
@@ -347,7 +376,7 @@
                         </svg>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-value" id="totalMotorsInDb">5000</div>
+                        <div class="stat-value" id="totalMotorsInDb">30</div>
                         <div class="stat-label">Total Motors in Database</div>
                     </div>
                 </div>
@@ -590,20 +619,49 @@
                             <label class="form-label">Department *</label>
                             <select class="form-select" name="department" required>
                                 <option value="">Select Department</option>
-                                <option value="Production">Production</option>
-                                <option value="Utilities">Utilities</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="Warehouse">Warehouse</option>
+                                <option value="Olefin-1/2">Olefin-1/2</option>
+                                <option value="Olefin-3/4">Olefin-3/4</option>
+                                <option value="PolyOlefin-1/2">PolyOlefin-1/2</option>
+                                <option value="PolyOlefin-3">PolyOlefin-3</option>
+                                <option value="PolyOlefin-4">PolyOlefin-4</option>
+                                <option value="Utility&Offsite">Utility&Offsite</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Plant *</label>
                             <select class="form-select" name="plant" required>
                                 <option value="">Select Plant</option>
-                                <option value="Plant A">Plant A</option>
-                                <option value="Plant B">Plant B</option>
-                                <option value="Plant C">Plant C</option>
-                                <option value="Plant D">Plant D</option>
+                                <option value="EU1">EU1</option>
+                                <option value="EU2">EU2</option>
+                                <option value="OCU">OCU</option>
+                                <option value="BT">BT</option>
+                                <option value="EU3">EU3</option>
+                                <option value="EU4">EU4</option>
+                                <option value="BT3">BT3</option>
+                                <option value="PE1">PE1</option>
+                                <option value="PE2">PE2</option>
+                                <option value="PE3">PE3</option>
+                                <option value="PP1">PP1</option>
+                                <option value="PP2">PP2</option>
+                                <option value="PE4">PE4</option>
+                                <option value="PE5">PE5</option>
+                                <option value="PP3">PP3</option>
+                                <option value="PP4">PP4</option>
+                                <option value="PP5">PP5</option>
+                                <option value="PPC">PPC</option>
+                                <option value="PEC">PEC</option>
+                                <option value="PE6">PE6</option>
+                                <option value="PE7">PE7</option>
+                                <option value="LDPE">LDPE</option>
+                                <option value="XL1">XL1</option>
+                                <option value="XL2">XL2</option>
+                                <option value="UO1">UO1</option>
+                                <option value="UO2">UO2</option>
+                                <option value="UO3">UO3</option>
+                                <option value="UO4">UO4</option>
+                                <option value="MH1">MH1</option>
+                                <option value="MH2">MH2</option>
+                                <option value="MH3">MH3</option>
                             </select>
                         </div>
                     </div>

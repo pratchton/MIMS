@@ -552,6 +552,11 @@ body {
     color: #107e3e;
 }
 
+.status-standby {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
 .status-maintenance {
     background: #fff4e6;
     color: #e9730c;
