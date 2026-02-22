@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderMotorTable(motors.slice(0, 50)); // Show first 50 motors
     updateMotorCount(motors.length);
     buildMotorDatabase(); // Build database specifications
+    renderSparePartsTable(); // Render spare parts
 });
 
 // Update statistics based on motor status
@@ -617,6 +618,249 @@ function showNotification(message, type = 'info') {
             document.body.removeChild(notification);
         }, 300);
     }, 3000);
+}
+
+// Spare Parts Data (from BOM database v1.csv)
+const spareParts = [
+    {"materialType":"Bearing","materialNumber":"120100026100","partNumber":"6208ZZC3","description":"BEARING,BALL:DP GRV;6208ZZC3;40MM;80MM","applicableMotors":13,"total":4,"mrp":"Z1","rop":2,"max":4,"tier":"Z1"},
+    {"materialType":"Bearing","materialNumber":"120100126293","partNumber":"6208ZZC3","description":"BEARING:20024704;9143-1;30;64056839-A204","applicableMotors":2,"total":0,"mrp":"Z1","rop":1,"max":1,"tier":"Z1"},
+    {"materialType":"Bearing","materialNumber":"120100126250","partNumber":"63102ZC3","description":"BEARING:20024704;9143-2;50;64056839-A204","applicableMotors":2,"total":0,"mrp":"Z1","rop":1,"max":1,"tier":"Z1"},
+    {"materialType":"Bearing","materialNumber":"120100126243","partNumber":"62082ZC3","description":"BEARING:20024704;9201-1;6;64056839-A204","applicableMotors":5,"total":1,"mrp":"Z1","rop":2,"max":5,"tier":"Z1"},
+    {"materialType":"Bearing","materialNumber":"120100126296","partNumber":"6205ZZC3","description":"BEARING:20024704;9201-2;6;64056839-A204","applicableMotors":5,"total":0,"mrp":"Z1","rop":2,"max":2,"tier":"Z1"}
+];
+
+// BOM to Motor Mapping (from BOM database)
+const bomToMotorMapping = {
+    "120100026100": ["76PM001A", "76PM001B", "76PM002A", "76PM002B", "76PM008A", "76PM008B", "76PM010A", "76PM010B", "76PM205A", "76PM205B", "76PM206", "76XK202PM215A", "76XK202PM215B"],
+    "120100126293": ["76PM002A", "76PM002B"],
+    "120100126250": ["76PM001A", "76PM001B"],
+    "120100126243": ["76XP101APM101A", "76XP101BPM101B", "76XK202KM202A", "76XK202KM202B", "76XK202PM217A"],
+    "120100126296": ["76XP101APM101A", "76XP101BPM101B", "76XK202KM202A", "76XK202KM202B", "76XK202PM217B"]
+};
+
+// View Motors for Spare Part function
+function viewMotorsForSparePart(materialNumber) {
+    const part = spareParts.find(p => p.materialNumber === materialNumber);
+    if (!part) {
+        showNotification('Spare part not found', 'error');
+        return;
+    }
+    
+    // Get motor tag numbers for this material
+    const motorTags = bomToMotorMapping[materialNumber] || [];
+    
+    // Find motors from the main motors array
+    const affectedMotors = motors.filter(motor => motorTags.includes(motor.tagNumber));
+    
+    if (affectedMotors.length === 0) {
+        showNotification('No motors found for this spare part', 'info');
+        return;
+    }
+    
+    // Update modal title
+    document.getElementById('motorsListTitle').textContent = 'Motors Affected by Spare Part';
+    document.getElementById('motorsListSubtitle').textContent = `${affectedMotors.length} motor(s) using ${part.partNumber}`;
+    
+    // Build specification summary for spare part
+    const specSummary = document.getElementById('specSummary');
+    
+    let statusText, statusClass;
+    if (part.total === 0) {
+        statusText = 'CRITICAL - Zero Stock';
+        statusClass = 'text-critical';
+    } else if (part.total < part.rop) {
+        statusText = 'WARNING - Below ROP';
+        statusClass = 'text-warning';
+    }
+    
+    specSummary.innerHTML = `
+        <div class="spec-summary-title">Spare Part Details</div>
+        <div class="spec-summary-grid">
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Material Number</div>
+                <div class="spec-summary-value">${part.materialNumber}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Part Number</div>
+                <div class="spec-summary-value">${part.partNumber}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Description</div>
+                <div class="spec-summary-value" style="font-size: 0.875rem;">${part.description}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Current Stock</div>
+                <div class="spec-summary-value ${statusClass}">${part.total} / ${part.max}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">ROP</div>
+                <div class="spec-summary-value">${part.rop}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Status</div>
+                <div class="spec-summary-value ${statusClass}">${statusText}</div>
+            </div>
+            <div class="spec-summary-item">
+                <div class="spec-summary-label">Tier</div>
+                <div class="spec-summary-value">${part.total === 0 ? 'Tier 1' : 'Tier 2'}</div>
+            </div>
+        </div>
+    `;
+    
+    // Render motors table
+    renderMotorsList(affectedMotors);
+    
+    // Show modal
+    document.getElementById('motorsListModal').classList.add('active');
+}
+
+// Render Spare Parts Table (Show only Zero Stock and Below ROP)
+function renderSparePartsTable() {
+    const tbody = document.getElementById('sparePartsTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    // Filter for Zero stock (Tier 1) and Below ROP (Tier 2)
+    const criticalParts = spareParts.filter(part => {
+        return part.total === 0 || (part.total > 0 && part.total < part.rop);
+    });
+    
+    // Sort by priority: Zero stock first, then below ROP
+    const sortedParts = criticalParts.sort((a, b) => {
+        if (a.total === 0 && b.total > 0) return -1;
+        if (a.total > 0 && b.total === 0) return 1;
+        return 0;
+    });
+    
+    sortedParts.forEach(part => {
+        const row = document.createElement('tr');
+        
+        // Determine status and tier
+        let statusClass, statusText, tierLevel, tierClass, rowClass;
+        if (part.total === 0) {
+            statusClass = 'status-critical';
+            statusText = 'Zero Stock';
+            tierLevel = 'Tier 1';
+            tierClass = 'tier-critical';
+            rowClass = 'row-critical';
+        } else if (part.total < part.rop) {
+            statusClass = 'status-warning';
+            statusText = 'Below ROP';
+            tierLevel = 'Tier 2';
+            tierClass = 'tier-high';
+            rowClass = 'row-warning';
+        }
+        
+        row.className = rowClass;
+        row.innerHTML = `
+            <td><strong>${part.materialNumber}</strong></td>
+            <td>${part.partNumber}</td>
+            <td>${part.description}</td>
+            <td><span class="count-badge">${part.applicableMotors}</span></td>
+            <td><strong class="${part.total === 0 ? 'text-critical' : 'text-warning'}">${part.total}</strong></td>
+            <td>${part.mrp}</td>
+            <td>${part.rop}</td>
+            <td>${part.max}</td>
+            <td><span class="tier-badge ${tierClass}">${tierLevel}</span></td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>
+                <button class="btn btn-ghost btn-sm" onclick="viewMotorsForSparePart('${part.materialNumber}')" title="View Motors">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                    View Motors
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="trackSparePart('${part.materialNumber}')" title="Track">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                    </svg>
+                    Track
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    updateSparePartsStats();
+}
+
+// Update spare parts statistics
+function updateSparePartsStats() {
+    const zeroStock = spareParts.filter(p => p.total === 0).length;
+    const belowRop = spareParts.filter(p => p.total > 0 && p.total < p.rop).length;
+    
+    document.getElementById('belowRopCount').textContent = zeroStock;  // Changed to show zero stock count
+    document.getElementById('belowMrpCount').textContent = belowRop;   // Changed to show below ROP count
+    document.getElementById('sparePartsCount').textContent = zeroStock + belowRop;
+}
+
+// Track spare part function
+function trackSparePart(materialNumber) {
+    const part = spareParts.find(p => p.materialNumber === materialNumber);
+    if (part) {
+        const stockPercentage = ((part.total / part.max) * 100).toFixed(1);
+        const needToOrder = Math.max(0, part.rop - part.total);
+        
+        let status;
+        if (part.total === 0) {
+            status = '🔴 CRITICAL - Zero Stock';
+        } else if (part.total < part.rop) {
+            status = '🟠 WARNING - Below ROP';
+        } else {
+            status = '✓ Adequate';
+        }
+        
+        alert(`Spare Part Tracking\n\n` +
+              `Material Number: ${part.materialNumber}\n` +
+              `Part Number: ${part.partNumber}\n` +
+              `Description: ${part.description}\n` +
+              `Material Type: ${part.materialType}\n\n` +
+              `Stock Level: ${part.total} / ${part.max} (${stockPercentage}%)\n` +
+              `MRP: ${part.mrp}\n` +
+              `ROP: ${part.rop}\n\n` +
+              `Applicable Motors: ${part.applicableMotors}\n` +
+              `Status: ${status}\n\n` +
+              `${needToOrder > 0 ? `⚠️ URGENT - Order ${needToOrder} units immediately!` : '✓ Stock level adequate'}`);
+    }
+}
+
+// Export spare parts to Excel
+function exportSparePartsToExcel() {
+    const headers = ['Material Number', 'Part Number', 'Description', 'Applicable Motors', 'Total', 'MRP', 'ROP', 'MAX', 'Tier', 'Status'];
+    
+    // Only export critical parts (zero stock and below ROP)
+    const criticalParts = spareParts.filter(p => p.total === 0 || (p.total > 0 && p.total < p.rop));
+    
+    const csvContent = [
+        headers.join(','),
+        ...criticalParts.map(part => {
+            let status, tier;
+            if (part.total === 0) {
+                status = 'Zero Stock';
+                tier = 'Tier 1';
+            } else if (part.total < part.rop) {
+                status = 'Below ROP';
+                tier = 'Tier 2';
+            }
+            
+            return [
+                part.materialNumber,
+                part.partNumber,
+                `"${part.description}"`,
+                part.applicableMotors,
+                part.total,
+                part.mrp,
+                part.rop,
+                part.max,
+                tier,
+                status
+            ].join(',');
+        })
+    ].join('\n');
+    
+    downloadCSV(csvContent, 'critical_spare_parts_inventory.csv');
+    showNotification('Exporting critical spare parts inventory...', 'success');
 }
 
 // Motor Database Functions

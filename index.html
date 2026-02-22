@@ -299,49 +299,67 @@
                     <label class="filter-label">Power (kW)</label>
                     <select class="filter-select" id="dbFilterPower" onchange="applyDatabaseFilters()">
                         <option value="">All Power Ratings</option>
-                        <option value="3.7">3.7 kW</option>
-                        <option value="5.5">5.5 kW</option>
-                        <option value="7.5">7.5 kW</option>
+                        <option value="0.18">0.18 kW</option>
+                        <option value="1.1">1.1 kW</option>
+                        <option value="2.2">2.2 kW</option>
+                        <option value="3">3 kW</option>
+                        <option value="4">4 kW</option>
                         <option value="11">11 kW</option>
                         <option value="15">15 kW</option>
-                        <option value="18.5">18.5 kW</option>
                         <option value="22">22 kW</option>
                         <option value="30">30 kW</option>
-                        <option value="37">37 kW</option>
-                        <option value="45">45 kW</option>
                         <option value="55">55 kW</option>
-                        <option value="75">75 kW</option>
+                        <option value="180">180 kW</option>
+                        <option value="560">560 kW</option>
+                        <option value="1428">1428 kW</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Voltage (V)</label>
                     <select class="filter-select" id="dbFilterVoltage" onchange="applyDatabaseFilters()">
                         <option value="">All Voltages</option>
-                        <option value="380-415V">380-415V</option>
-                        <option value="220V">220V</option>
-                        <option value="440V">440V</option>
+                        <option value="415V">415V</option>
+                        <option value="3300V">3300V</option>
+                        <option value="11000V">11000V</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Speed (rpm)</label>
                     <select class="filter-select" id="dbFilterSpeed" onchange="applyDatabaseFilters()">
                         <option value="">All Speeds</option>
-                        <option value="1500">1500 rpm</option>
-                        <option value="3000">3000 rpm</option>
+                        <option value="1435">1435 rpm</option>
+                        <option value="1437">1437 rpm</option>
+                        <option value="1455">1455 rpm</option>
+                        <option value="1470">1470 rpm</option>
+                        <option value="1475">1475 rpm</option>
+                        <option value="1480">1480 rpm</option>
+                        <option value="1482">1482 rpm</option>
+                        <option value="2895">2895 rpm</option>
+                        <option value="2925">2925 rpm</option>
+                        <option value="2940">2940 rpm</option>
+                        <option value="2959">2959 rpm</option>
+                        <option value="2960">2960 rpm</option>
+                        <option value="2983">2983 rpm</option>
+                        <option value="2987">2987 rpm</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Type & Frame</label>
                     <select class="filter-select" id="dbFilterFrame" onchange="applyDatabaseFilters()">
                         <option value="">All Frame Sizes</option>
-                        <option value="IEC 100L">IEC 100L</option>
-                        <option value="IEC 112M">IEC 112M</option>
-                        <option value="IEC 132M">IEC 132M</option>
-                        <option value="IEC 160M">IEC 160M</option>
-                        <option value="IEC 180M">IEC 180M</option>
-                        <option value="IEC 200L">IEC 200L</option>
-                        <option value="IEC 225M">IEC 225M</option>
-                        <option value="IEC 250M">IEC 250M</option>
+                        <option value="63A2">63A2</option>
+                        <option value="90SLA">90SLA</option>
+                        <option value="100L">100L</option>
+                        <option value="112MU">112MU</option>
+                        <option value="132">132</option>
+                        <option value="160">160</option>
+                        <option value="160M/L">160M/L</option>
+                        <option value="180MLA">180MLA</option>
+                        <option value="WUDF225MN">WUDF225MN</option>
+                        <option value="WU-DF280MNE">WU-DF280MNE</option>
+                        <option value="400">400</option>
+                        <option value="450">450</option>
+                        <option value="500L2A">500L2A</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -413,7 +431,15 @@
             <div class="page-header">
                 <div class="page-title-section">
                     <h2 class="page-title">Spare Part Availability</h2>
-                    <p class="page-description">Monitor zero stock items and tier impact on motors</p>
+                    <p class="page-description">Monitor inventory levels and tier impact on motors</p>
+                </div>
+                <div class="page-actions">
+                    <button class="btn btn-primary" onclick="exportSparePartsToExcel()">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+                        </svg>
+                        Export to Excel
+                    </button>
                 </div>
             </div>
 
@@ -425,11 +451,11 @@
                             <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
                         </svg>
                         <div>
-                            <div class="alert-title">Critical Stock Out</div>
-                            <div class="alert-subtitle">Immediate attention required</div>
+                            <div class="alert-title">Zero Stock (Tier 1)</div>
+                            <div class="alert-subtitle">Critical - Immediate action required</div>
                         </div>
                     </div>
-                    <div class="alert-value">8 items</div>
+                    <div class="alert-value" id="belowRopCount">0</div>
                 </div>
                 <div class="alert-card alert-warning">
                     <div class="alert-header">
@@ -437,80 +463,37 @@
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                         </svg>
                         <div>
-                            <div class="alert-title">Low Stock</div>
-                            <div class="alert-subtitle">Below minimum level</div>
+                            <div class="alert-title">Below ROP (Tier 2)</div>
+                            <div class="alert-subtitle">Warning - Reorder required</div>
                         </div>
                     </div>
-                    <div class="alert-value">23 items</div>
-                </div>
-                <div class="alert-card alert-info">
-                    <div class="alert-header">
-                        <svg class="alert-icon" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                        </svg>
-                        <div>
-                            <div class="alert-title">Adequate Stock</div>
-                            <div class="alert-subtitle">Normal inventory levels</div>
-                        </div>
-                    </div>
-                    <div class="alert-value">142 items</div>
+                    <div class="alert-value" id="belowMrpCount">0</div>
                 </div>
             </div>
 
-            <!-- Zero Stock Table -->
+            <!-- Spare Parts Table -->
             <div class="table-container">
                 <div class="table-header">
-                    <h3 class="table-title">Zero Stock Items</h3>
+                    <h3 class="table-title">Spare Parts Inventory (<span id="sparePartsCount">0</span> items)</h3>
                 </div>
-                <table class="data-table">
+                <table class="data-table" id="sparePartsTable">
                     <thead>
                         <tr>
+                            <th>Material</th>
                             <th>Part Number</th>
                             <th>Description</th>
                             <th>Applicable Motors</th>
+                            <th>Total</th>
+                            <th>MRP</th>
+                            <th>ROP</th>
+                            <th>MAX</th>
                             <th>Tier Impact</th>
-                            <th>Last Stock Date</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>BRG-6309-2Z</strong></td>
-                            <td>Bearing 6309-2Z Deep Groove</td>
-                            <td><span class="count-badge">156</span></td>
-                            <td><span class="tier-badge tier-critical">Tier 1</span></td>
-                            <td>2025-01-15</td>
-                            <td><span class="status-badge status-critical">Zero Stock</span></td>
-                            <td><button class="btn btn-sm btn-primary">Order Now</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>BRG-6308-2RS</strong></td>
-                            <td>Bearing 6308-2RS Sealed</td>
-                            <td><span class="count-badge">89</span></td>
-                            <td><span class="tier-badge tier-critical">Tier 1</span></td>
-                            <td>2025-01-20</td>
-                            <td><span class="status-badge status-critical">Zero Stock</span></td>
-                            <td><button class="btn btn-sm btn-primary">Order Now</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>GRS-SHELL-2</strong></td>
-                            <td>Shell Gadus S2 V220 Grease</td>
-                            <td><span class="count-badge">450</span></td>
-                            <td><span class="tier-badge tier-high">Tier 2</span></td>
-                            <td>2025-02-01</td>
-                            <td><span class="status-badge status-warning">Low Stock</span></td>
-                            <td><button class="btn btn-sm btn-secondary">Review</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>SEAL-V100</strong></td>
-                            <td>V-Ring Seal 100mm</td>
-                            <td><span class="count-badge">67</span></td>
-                            <td><span class="tier-badge tier-medium">Tier 3</span></td>
-                            <td>2025-01-28</td>
-                            <td><span class="status-badge status-warning">Low Stock</span></td>
-                            <td><button class="btn btn-sm btn-secondary">Review</button></td>
-                        </tr>
+                    <tbody id="sparePartsTableBody">
+                        <!-- Data will be populated by JavaScript -->
                     </tbody>
                 </table>
             </div>

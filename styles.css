@@ -535,6 +535,35 @@ body {
     background: var(--gray-50);
 }
 
+/* Critical Row Highlighting */
+.row-critical {
+    background-color: #ffebee !important;
+    border-left: 4px solid var(--error-color);
+}
+
+.row-critical:hover {
+    background-color: #ffcdd2 !important;
+}
+
+.row-warning {
+    background-color: #fff4e6 !important;
+    border-left: 4px solid var(--warning-color);
+}
+
+.row-warning:hover {
+    background-color: #ffe0b2 !important;
+}
+
+.text-critical {
+    color: var(--error-color);
+    font-weight: 700;
+}
+
+.text-warning {
+    color: var(--warning-color);
+    font-weight: 700;
+}
+
 /* Status Badges */
 .status-badge {
     display: inline-flex;
